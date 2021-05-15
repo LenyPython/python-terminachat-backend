@@ -10,16 +10,22 @@ NICK = ''
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client.connect((HOST, PORT))
 client.send(NICK.encode('utf-8'))
+run = True
 
 
 def print_msg():
-    while True:
+    global run
+    while run:
         try:
             msg = client.recv(1024).decode('utf-8')
             if msg == 'NICK':
                 client.send(NICK.encode('utf-8'))
+            elif msg == 'You were kicked from the server':
+                print(msg)
+                client.close()
+                run = False
             else:
-                print(f'{msg}')
+                print(msg)
         except Exception as e:
             print(f'Exception at reciving: {e}')
             client.close()
@@ -27,7 +33,8 @@ def print_msg():
 
 
 def send_msg():
-    while True:
+    global run
+    while run:
         try:
             msg = f'{NICK}: {input("")}'
             client.send(msg.encode('utf-8'))
