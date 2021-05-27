@@ -19,9 +19,9 @@ class Client:
     def print_msg(self):
         while self.run:
             try:
-                msg = selfclient.recv(1024).decode('utf-8')
+                msg = self.client.recv(1024).decode('utf-8')
                 if msg == 'NICK':
-                    self.client.send(NICK.encode('utf-8'))
+                    self.client.send(self.nick.encode('utf-8'))
                 elif msg == 'You were kicked from the server':
                     print(msg)
                     self.client.close()
@@ -36,8 +36,11 @@ class Client:
     def send_msg(self):
         while self.run:
             try:
-                msg = f'{NICK}: {input("")}'
-                self.client.send(msg.encode('utf-8'))
+                msg = f'{self.nick}: {input("")}'
+                if self.run:
+                    self.client.send(msg.encode('utf-8'))
+                else:
+                    print('Disconnected...')
             except Exception as e:
                 print(f'Exception client send: {e}')
                 break
